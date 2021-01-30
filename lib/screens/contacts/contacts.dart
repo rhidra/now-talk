@@ -8,6 +8,10 @@ class Contacts extends StatefulWidget {
 class _ContactsState extends State<Contacts> {
   @override
   Widget build(BuildContext context) {
-    return Container();
+    return Container(
+      child: Center(
+        child: Text('Hello contacts'),
+      ),
+    );
   }
 }

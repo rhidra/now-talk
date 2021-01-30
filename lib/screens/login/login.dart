@@ -1,11 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:now_talk/bloc/auth/auth-bloc.dart';
-import 'package:now_talk/bloc/auth/auth-event.dart';
-import 'package:now_talk/bloc/auth/auth-state.dart';
 import 'package:now_talk/components/error.dart';
 import 'package:now_talk/components/loading.dart';
+import 'package:now_talk/scoped_model/auth-model.dart';
+import 'package:scoped_model/scoped_model.dart';
 
 class Login extends StatefulWidget {
   @override
@@ -14,35 +12,29 @@ class Login extends StatefulWidget {
 
 class _LoginState extends State<Login> {
   String _username = '';
-  AuthBloc _auth;
-
-  @override
-  void initState() {
-    super.initState();
-    _auth = BlocProvider.of<AuthBloc>(context);
-  }
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<AuthBloc, AuthState>(
-      bloc: _auth,
-      builder: (BuildContext context, AuthState state) {
-        print('login $state');
-        if (state is AuthLoading) {
+    return ScopedModelDescendant<AuthModel>(
+      builder: (context, child, AuthModel authModel) {
+        if (authModel.isLoading) {
           return LoadingScreen();
-        } else if (state is Unauthenticated) {
-          return ErrorScreen(error: 'Unauthenticated');
-        } else if (state is AnonymouslyAuthenticated) {
-          return _buildUsernameForm(context);
-        } else if (state is Authenticated) {
-          return ErrorScreen(error: 'You will be redirected...');
+        } else if (authModel.isError) {
+          return ErrorScreen(error: authModel.error);
+        } else if (authModel.isAuthenticated) {
+          Future.delayed(
+            Duration(milliseconds: 1),
+            () => Navigator.of(context).pushNamedAndRemoveUntil('/contacts', (route) => false),
+          );
+          return LoadingScreen();
+        } else {
+          return _buildUsernameForm(context, authModel);
         }
-        return ErrorScreen();
       },
     );
   }
 
-  _buildUsernameForm(BuildContext context) {
+  _buildUsernameForm(BuildContext context, AuthModel authModel) {
     return Scaffold(
       body: Container(
         height: double.infinity,
@@ -96,10 +88,8 @@ class _LoginState extends State<Login> {
                       ],
                     ),
                   ),
-                  onPressed: () {
-                    _auth.add(SetUsername(_username));
-                  },
                   shape: const StadiumBorder(),
+                  onPressed: () => authModel.setUsername(_username),
                 ),
               ],
             ),
