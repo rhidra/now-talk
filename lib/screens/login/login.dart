@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:now_talk/components/error.dart';
 import 'package:now_talk/components/loading.dart';
-import 'package:now_talk/scoped_model/auth-model.dart';
+import 'package:now_talk/scoped_model/main-model.dart';
 import 'package:scoped_model/scoped_model.dart';
 
 class Login extends StatefulWidget {
@@ -15,26 +15,26 @@ class _LoginState extends State<Login> {
 
   @override
   Widget build(BuildContext context) {
-    return ScopedModelDescendant<AuthModel>(
-      builder: (context, child, AuthModel authModel) {
-        if (authModel.isLoading) {
+    return ScopedModelDescendant<MainModel>(
+      builder: (context, child, MainModel model) {
+        if (model.isLoading) {
           return LoadingScreen();
-        } else if (authModel.isError) {
-          return ErrorScreen(error: authModel.error);
-        } else if (authModel.isAuthenticated) {
+        } else if (model.isError) {
+          return ErrorScreen(error: model.error);
+        } else if (model.isAuthenticated) {
           Future.delayed(
             Duration(milliseconds: 1),
             () => Navigator.of(context).pushNamedAndRemoveUntil('/contacts', (route) => false),
           );
           return LoadingScreen();
         } else {
-          return _buildUsernameForm(context, authModel);
+          return _buildUsernameForm(context, model);
         }
       },
     );
   }
 
-  _buildUsernameForm(BuildContext context, AuthModel authModel) {
+  _buildUsernameForm(BuildContext context, MainModel model) {
     return Scaffold(
       body: Container(
         height: double.infinity,
@@ -89,7 +89,7 @@ class _LoginState extends State<Login> {
                     ),
                   ),
                   shape: const StadiumBorder(),
-                  onPressed: () => authModel.setUsername(_username),
+                  onPressed: () => model.setUsername(_username),
                 ),
               ],
             ),
