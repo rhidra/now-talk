@@ -32,13 +32,19 @@ dependencies:
   firebase_auth: ^0.20.0+1
   cloud_firestore: ^0.16.0
 
-  flutter_bloc: ^4.0.0
   equatable: ^1.2.5
   scoped_model: ^1.1.0
+
+  bubble: ^1.1.9+1
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
+
+analyzer:
+  strong-mode: true
+  language:
+    enableSuperMixins: true
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
