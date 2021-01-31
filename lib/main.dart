@@ -1,10 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:now_talk/bloc/auth/auth-bloc.dart';
-import 'package:now_talk/bloc/auth/auth-event.dart';
-import 'package:now_talk/bloc/auth/auth-state.dart';
-import 'package:now_talk/scoped_model/auth-model.dart';
+import 'package:now_talk/scoped_model/main-model.dart';
+import 'package:now_talk/screens/chat/chat.dart';
 import 'package:now_talk/screens/contacts/contacts.dart';
 import 'package:now_talk/screens/login/login.dart';
 import 'package:scoped_model/scoped_model.dart';
@@ -12,18 +9,18 @@ import 'package:scoped_model/scoped_model.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
-  runApp(MyApp(authModel: AuthModel()));
+  runApp(MyApp(model: MainModel()));
 }
 
 class MyApp extends StatelessWidget {
-  final AuthModel authModel;
+  final MainModel model;
 
-  MyApp({this.authModel});
+  MyApp({this.model});
 
   @override
   Widget build(BuildContext context) {
-    return ScopedModel<AuthModel>(
-      model: authModel,
+    return ScopedModel<MainModel>(
+      model: model,
       child: Root(),
     );
   }
@@ -49,10 +46,20 @@ class _RootState extends State<Root> {
         visualDensity: VisualDensity.adaptivePlatformDensity,
       ),
       initialRoute: '/',
-      routes: {
-        '/': (BuildContext context) => Login(),
-        '/contacts': (BuildContext context) => Contacts(),
+      onGenerateRoute: (RouteSettings settings) {
+        final routes = <String, WidgetBuilder>{
+          '/': (ctx) => Login(),
+          '/contacts': (ctx) => Contacts(),
+          '/chat': (ctx) => Chat(user: settings.arguments),
+        };
+        WidgetBuilder builder = routes[settings.name];
+        return MaterialPageRoute(builder: (ctx) => builder(ctx));
       },
+      // routes: {
+      //   '/': (BuildContext context) => Login(),
+      //   '/contacts': (BuildContext context) => Contacts(),
+      //   '/chat': (BuildContext context) => Chat(),
+      // },
     );
   }
 }
