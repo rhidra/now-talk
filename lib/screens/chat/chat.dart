@@ -70,7 +70,7 @@ class _ChatState extends State<Chat> {
                   padding: EdgeInsets.all(10),
                   child: TextField(
                     onChanged: (text) => setState(() => _text = text),
-                    onEditingComplete: () => handleSubmit(),
+                    onEditingComplete: () => handleSubmit(model),
                     decoration: InputDecoration(
                       contentPadding: EdgeInsets.only(top: 5, bottom: 5, left: 20, right: 20),
                       border: OutlineInputBorder(borderRadius: BorderRadius.circular(5)),
@@ -88,7 +88,8 @@ class _ChatState extends State<Chat> {
     });
   }
 
-  void handleSubmit() {
-    print(_text);
+  void handleSubmit(MainModel model) {
+    model.sendMessage(_text, widget.group);
+    setState(() => _text = '');
   }
 }

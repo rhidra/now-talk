@@ -3,6 +3,7 @@ import 'package:now_talk/models/chat.dart';
 import 'package:now_talk/models/group.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:now_talk/models/user.dart';
 
 import 'contacts-model.dart';
 
@@ -26,7 +27,7 @@ class ChatScopedModel extends ContactsScopedModel {
     DocumentSnapshot chat = await _chatsRef.doc(group.id).get();
 
     if (!chat.exists) {
-      _chatsRef.doc(group.id).set({'messages': []});
+      _chatsRef.doc(group.id).set({'messages': []}, SetOptions(merge: true));
     }
 
     _chatsRef.doc(group.id).snapshots().listen(
@@ -49,5 +50,17 @@ class ChatScopedModel extends ContactsScopedModel {
 
     _chat = ChatModel.fromJson(group.id, snapshot.data(), group.users);
     notifyListeners();
+  }
+
+  void sendMessage(String content, GroupModel group) {
+    final msg = {
+      'content': content,
+      'sentAt': Timestamp.now(),
+      'sentBy': _auth.currentUser.uid,
+    };
+
+    _chatsRef.doc(group.id).update({
+      'messages': FieldValue.arrayUnion([msg])
+    });
   }
 }
