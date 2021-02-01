@@ -1,7 +1,9 @@
+import 'package:bubble/bubble.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:now_talk/components/error.dart';
+import 'package:now_talk/components/loading.dart';
 import 'package:now_talk/models/group.dart';
-import 'package:now_talk/models/user.dart';
 import 'package:now_talk/scoped_model/main-model.dart';
 import 'package:scoped_model/scoped_model.dart';
 
@@ -15,15 +17,78 @@ class Chat extends StatefulWidget {
 }
 
 class _ChatState extends State<Chat> {
+  String _text = '';
+
+  @override
+  void initState() {
+    super.initState();
+    MainModel model = ScopedModel.of(context);
+    model.loadChat(widget.group);
+  }
+
   @override
   Widget build(BuildContext context) {
     return ScopedModelDescendant<MainModel>(builder: (context, child, MainModel model) {
+      if (!model.isAuthenticated) {
+        return ErrorScreen();
+      } else if (model.isChatLoading) {
+        return LoadingScreen();
+      }
+
+      final feed = model.chat.messages.reversed.map(
+        (msg) => Align(
+          alignment: msg.isMe ? Alignment.bottomRight : Alignment.bottomLeft,
+          child: Bubble(
+            child: Padding(
+              padding: EdgeInsets.all(5),
+              child: Text(msg.content),
+            ),
+            radius: Radius.circular(100),
+            margin: BubbleEdges.only(bottom: 25, right: 10, left: 10),
+            nip: msg.isMe ? BubbleNip.rightBottom : BubbleNip.leftBottom,
+            color: msg.isMe ? Colors.white : Color.fromRGBO(225, 255, 199, 1.0),
+          ),
+        ),
+      );
+
       return Scaffold(
         appBar: AppBar(
           title: Text(widget.group.getName(model.user.uid)),
         ),
-        body: Container(),
+        body: Stack(
+          children: [
+            ListView(
+              children: feed.toList(),
+              reverse: true,
+            ),
+            Align(
+              alignment: Alignment.bottomCenter,
+              child: Container(
+                // height: 60,
+                decoration: BoxDecoration(),
+                child: Padding(
+                  padding: EdgeInsets.all(10),
+                  child: TextField(
+                    onChanged: (text) => setState(() => _text = text),
+                    onEditingComplete: () => handleSubmit(),
+                    decoration: InputDecoration(
+                      contentPadding: EdgeInsets.only(top: 5, bottom: 5, left: 20, right: 20),
+                      border: OutlineInputBorder(borderRadius: BorderRadius.circular(5)),
+                      fillColor: Colors.white,
+                      filled: true,
+                      hintText: 'Enter messsage...',
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
       );
     });
+  }
+
+  void handleSubmit() {
+    print(_text);
   }
 }
