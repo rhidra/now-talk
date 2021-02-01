@@ -6,7 +6,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/widgets.dart';
 import 'auth-model.dart';
 
-class ContactsModel extends AuthModel {
+class ContactsScopedModel extends AuthScopedModel {
   FirebaseAuth _auth = FirebaseAuth.instance;
   CollectionReference _users = FirebaseFirestore.instance.collection('users');
   CollectionReference _groups = FirebaseFirestore.instance.collection('groups');
