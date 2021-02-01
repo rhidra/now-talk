@@ -50,7 +50,7 @@ class _RootState extends State<Root> {
         final routes = <String, WidgetBuilder>{
           '/': (ctx) => Login(),
           '/contacts': (ctx) => Contacts(),
-          '/chat': (ctx) => Chat(user: settings.arguments),
+          '/chat': (ctx) => Chat(group: settings.arguments),
         };
         WidgetBuilder builder = routes[settings.name];
         return MaterialPageRoute(builder: (ctx) => builder(ctx));

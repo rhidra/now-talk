@@ -22,7 +22,7 @@ class _ContactsState extends State<Contacts> {
           return LoadingScreen();
         }
 
-        final list = model.groups.map((GroupModel group) => _buildGroupCard(context, group));
+        final list = model.groups.map((GroupModel group) => _buildGroupCard(context, model, group));
 
         return Scaffold(
           appBar: AppBar(
@@ -37,7 +37,7 @@ class _ContactsState extends State<Contacts> {
     );
   }
 
-  Widget _buildGroupCard(BuildContext context, GroupModel group) {
+  Widget _buildGroupCard(BuildContext context, MainModel model, GroupModel group) {
     return Card(
       child: InkWell(
         splashColor: Colors.purpleAccent,
@@ -46,13 +46,12 @@ class _ContactsState extends State<Contacts> {
           child: Padding(
             padding: EdgeInsets.all(20),
             child: Text(
-              '',
-              // group.users.reduce((s, e) => s + ', ' + e),
+              group.getName(model.user.uid),
               style: TextStyle(fontSize: 24),
             ),
           ),
         ),
-        onTap: () => Navigator.of(context).pushNamed('/chat', arguments: group.id),
+        onTap: () => Navigator.of(context).pushNamed('/chat', arguments: group),
       ),
     );
   }
