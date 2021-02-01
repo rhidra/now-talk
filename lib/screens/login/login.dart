@@ -17,10 +17,10 @@ class _LoginState extends State<Login> {
   Widget build(BuildContext context) {
     return ScopedModelDescendant<MainModel>(
       builder: (context, child, MainModel model) {
-        if (model.isLoading) {
+        if (model.isAuthLoading) {
           return LoadingScreen();
-        } else if (model.isError) {
-          return ErrorScreen(error: model.error);
+        } else if (model.isAuthError) {
+          return ErrorScreen(error: model.authError);
         } else if (model.isAuthenticated) {
           Future.delayed(
             Duration(milliseconds: 1),
