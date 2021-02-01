@@ -13,14 +13,14 @@ class AuthModel extends Model {
 
   UserModel get user => _user;
   bool get isAuthenticated => _user != null;
-  bool get isLoading => _isLoading;
-  bool get isError => _error.isNotEmpty;
-  String get error => _error;
+  bool get isAuthLoading => _isLoading;
+  bool get isAuthError => _error.isNotEmpty;
+  String get authError => _error;
 
   @override
-  void addListener(VoidCallback listener) {
+  void addListener(VoidCallback listener) async {
     super.addListener(listener);
-    signInAnonymously();
+    await signInAnonymously();
   }
 
   void signInAnonymously() async {
