@@ -35,7 +35,7 @@ class _ChatState extends State<Chat> {
         return LoadingScreen();
       }
 
-      final feed = model.chat.messages.reversed.map(
+      final feed = model.chat.messages.reversed.map<Widget>(
         (msg) => Align(
           alignment: msg.isMe ? Alignment.bottomRight : Alignment.bottomLeft,
           child: Bubble(
@@ -46,7 +46,7 @@ class _ChatState extends State<Chat> {
             radius: Radius.circular(100),
             margin: BubbleEdges.only(bottom: 25, right: 10, left: 10),
             nip: msg.isMe ? BubbleNip.rightBottom : BubbleNip.leftBottom,
-            color: msg.isMe ? Colors.white : Color.fromRGBO(225, 255, 199, 1.0),
+            color: msg.isMe ? Colors.white : Color.fromRGBO(235, 199, 255, 1.0),
           ),
         ),
       );
@@ -58,13 +58,12 @@ class _ChatState extends State<Chat> {
         body: Stack(
           children: [
             ListView(
-              children: feed.toList(),
+              children: <Widget>[SizedBox(height: 50)] + feed.toList(),
               reverse: true,
             ),
             Align(
               alignment: Alignment.bottomCenter,
               child: Container(
-                // height: 60,
                 decoration: BoxDecoration(),
                 child: Padding(
                   padding: EdgeInsets.all(10),
