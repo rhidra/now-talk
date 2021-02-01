@@ -3,4 +3,9 @@ class UserModel {
   final String uid;
 
   UserModel(this.uid, this.username);
+
+  @override
+  String toString() {
+    return username;
+  }
 }
