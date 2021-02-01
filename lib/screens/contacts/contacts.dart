@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:now_talk/components/error.dart';
 import 'package:now_talk/components/loading.dart';
-import 'package:now_talk/models/user.dart';
+import 'package:now_talk/models/group.dart';
 import 'package:now_talk/scoped_model/main-model.dart';
 import 'package:scoped_model/scoped_model.dart';
 
@@ -18,28 +18,11 @@ class _ContactsState extends State<Contacts> {
       builder: (context, child, MainModel model) {
         if (!model.isAuthenticated) {
           return ErrorScreen();
-        } else if (model.isLoading) {
+        } else if (model.isContactsLoading) {
           return LoadingScreen();
         }
 
-        final list = model.contacts.map(
-          (UserModel user) => Card(
-            child: InkWell(
-              splashColor: Colors.purpleAccent,
-              child: Container(
-                width: double.infinity,
-                child: Padding(
-                  padding: EdgeInsets.all(20),
-                  child: Text(
-                    user.username,
-                    style: TextStyle(fontSize: 24),
-                  ),
-                ),
-              ),
-              onTap: () => Navigator.of(context).pushNamed('/chat', arguments: user),
-            ),
-          ),
-        );
+        final list = model.groups.map((GroupModel group) => _buildGroupCard(context, group));
 
         return Scaffold(
           appBar: AppBar(
@@ -51,6 +34,26 @@ class _ContactsState extends State<Contacts> {
           ),
         );
       },
+    );
+  }
+
+  Widget _buildGroupCard(BuildContext context, GroupModel group) {
+    return Card(
+      child: InkWell(
+        splashColor: Colors.purpleAccent,
+        child: Container(
+          width: double.infinity,
+          child: Padding(
+            padding: EdgeInsets.all(20),
+            child: Text(
+              '',
+              // group.users.reduce((s, e) => s + ', ' + e),
+              style: TextStyle(fontSize: 24),
+            ),
+          ),
+        ),
+        onTap: () => Navigator.of(context).pushNamed('/chat', arguments: group.id),
+      ),
     );
   }
 }
