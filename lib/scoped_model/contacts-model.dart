@@ -73,8 +73,8 @@ class ContactsScopedModel extends AuthScopedModel {
 
     // Load the last message for cleaner display
     await Future.wait(_contactsGroups.map<Future>((group) async {
-      final doc = await _chats.doc(group.id).get();
-      group.lastMessage = Message.fromJson(doc.data()['messages'].last, group.users);
+      final msg = (await _chats.doc(group.id).get()).data()['messages'];
+      group.lastMessage = msg.length > 0 ? Message.fromJson(msg.last, group.users) : null;
     }));
 
     _isLoading = false;
