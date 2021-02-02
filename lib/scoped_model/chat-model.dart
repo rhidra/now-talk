@@ -49,6 +49,7 @@ class ChatScopedModel extends ContactsScopedModel {
     }
 
     _chat = ChatModel.fromJson(group.id, snapshot.data(), group.users);
+    group.lastMessage = _chat.messages.last;
     notifyListeners();
   }
 

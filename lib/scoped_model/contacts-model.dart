@@ -1,4 +1,5 @@
 import 'package:firebase_core/firebase_core.dart';
+import 'package:now_talk/models/chat.dart';
 import 'package:now_talk/models/group.dart';
 import 'package:now_talk/models/user.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -10,6 +11,7 @@ class ContactsScopedModel extends AuthScopedModel {
   FirebaseAuth _auth = FirebaseAuth.instance;
   CollectionReference _users = FirebaseFirestore.instance.collection('users');
   CollectionReference _groups = FirebaseFirestore.instance.collection('groups');
+  CollectionReference _chats = FirebaseFirestore.instance.collection('chats');
 
   bool _isLoading = false;
   String _error = '';
@@ -57,7 +59,7 @@ class ContactsScopedModel extends AuthScopedModel {
         .toList();
 
     // Create missing group by comparing with the contacts
-    await Future.wait(_contacts.map((contact) async {
+    await Future.wait(_contacts.map<Future>((contact) async {
       if (_contactsGroups.any((group) => group.users.any((u) => u.uid == contact.uid))) {
         return;
       }
@@ -67,6 +69,12 @@ class ContactsScopedModel extends AuthScopedModel {
       });
       _contactsGroups.add(GroupModel(g.id, [this.user, contact]));
       notifyListeners();
+    }));
+
+    // Load the last message for cleaner display
+    await Future.wait(_contactsGroups.map<Future>((group) async {
+      final doc = await _chats.doc(group.id).get();
+      group.lastMessage = Message.fromJson(doc.data()['messages'].last, group.users);
     }));
 
     _isLoading = false;

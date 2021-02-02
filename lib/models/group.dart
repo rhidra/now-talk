@@ -1,8 +1,10 @@
+import 'package:now_talk/models/chat.dart';
 import 'package:now_talk/models/user.dart';
 
 class GroupModel {
   final String id;
   final List<UserModel> users;
+  Message lastMessage = null;
 
   GroupModel(this.id, this.users);
 

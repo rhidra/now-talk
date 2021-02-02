@@ -50,15 +50,10 @@ class _ContactsState extends State<Contacts> {
     return Card(
       child: InkWell(
         splashColor: Colors.purpleAccent,
-        child: Container(
-          width: double.infinity,
-          child: Padding(
-            padding: EdgeInsets.all(20),
-            child: Text(
-              group.getName(model.user.uid),
-              style: TextStyle(fontSize: 24),
-            ),
-          ),
+        child: ListTile(
+          leading: FlutterLogo(size: 56.0),
+          title: Text(group.getName(model.user.uid)),
+          subtitle: Text(group.lastMessage?.content ?? ''),
         ),
         onTap: () => Navigator.of(context).pushNamed('/chat', arguments: group),
       ),
