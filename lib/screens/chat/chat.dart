@@ -6,6 +6,7 @@ import 'package:now_talk/components/loading.dart';
 import 'package:now_talk/models/group.dart';
 import 'package:now_talk/scoped_model/main-model.dart';
 import 'package:scoped_model/scoped_model.dart';
+import 'dart:math' as math;
 
 class Chat extends StatefulWidget {
   final GroupModel group;
@@ -17,13 +18,19 @@ class Chat extends StatefulWidget {
 }
 
 class _ChatState extends State<Chat> {
-  String _text = '';
+  final _textCtrl = TextEditingController();
 
   @override
   void initState() {
     super.initState();
     MainModel model = ScopedModel.of(context);
     model.loadChat(widget.group);
+  }
+
+  @override
+  void dispose() {
+    _textCtrl.dispose();
+    super.dispose();
   }
 
   @override
@@ -51,6 +58,8 @@ class _ChatState extends State<Chat> {
         ),
       );
 
+      const double buttonWidth = 50;
+      const double barPadding = 10;
       return Scaffold(
         appBar: AppBar(
           title: Text(widget.group.getName(model.user.uid)),
@@ -58,25 +67,54 @@ class _ChatState extends State<Chat> {
         body: Stack(
           children: [
             ListView(
-              children: <Widget>[SizedBox(height: 50)] + feed.toList(),
+              children: <Widget>[SizedBox(height: 60)] + feed.toList(),
               reverse: true,
             ),
             Align(
-              alignment: Alignment.bottomCenter,
+              alignment: Alignment.bottomLeft,
               child: Container(
-                decoration: BoxDecoration(),
+                decoration: BoxDecoration(
+                  color: Colors.grey.shade50,
+                  boxShadow: [BoxShadow(blurRadius: 5, color: Colors.black.withAlpha(80))],
+                ),
                 child: Padding(
-                  padding: EdgeInsets.all(10),
-                  child: TextField(
-                    onChanged: (text) => setState(() => _text = text),
-                    onEditingComplete: () => handleSubmit(model),
-                    decoration: InputDecoration(
-                      contentPadding: EdgeInsets.only(top: 5, bottom: 5, left: 20, right: 20),
-                      border: OutlineInputBorder(borderRadius: BorderRadius.circular(5)),
-                      fillColor: Colors.white,
-                      filled: true,
-                      hintText: 'Enter messsage...',
-                    ),
+                  padding: EdgeInsets.all(barPadding),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.max,
+                    children: [
+                      Container(
+                        width: MediaQuery.of(context).size.width - buttonWidth - barPadding * 3,
+                        child: TextField(
+                          controller: _textCtrl,
+                          onEditingComplete: () => handleSubmit(model),
+                          decoration: InputDecoration(
+                            contentPadding: EdgeInsets.only(top: 5, bottom: 5, left: 20, right: 20),
+                            border: OutlineInputBorder(borderRadius: BorderRadius.circular(5)),
+                            fillColor: Colors.white,
+                            filled: true,
+                            hintText: 'Enter messsage...',
+                          ),
+                        ),
+                      ),
+                      SizedBox(width: barPadding),
+                      Material(
+                        child: Ink(
+                          width: buttonWidth,
+                          decoration: const ShapeDecoration(
+                            color: Colors.purple,
+                            shape: CircleBorder(),
+                          ),
+                          child: IconButton(
+                            icon: Transform.rotate(
+                              angle: (-35 * math.pi / 180),
+                              child: Icon(Icons.send),
+                            ),
+                            color: Colors.white,
+                            onPressed: () => handleSubmit(model),
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
                 ),
               ),
@@ -88,7 +126,10 @@ class _ChatState extends State<Chat> {
   }
 
   void handleSubmit(MainModel model) {
-    model.sendMessage(_text, widget.group);
-    setState(() => _text = '');
+    final txt = _textCtrl.text.trim();
+    if (txt.length > 0) {
+      model.sendMessage(txt, widget.group);
+    }
+    _textCtrl.clear();
   }
 }
