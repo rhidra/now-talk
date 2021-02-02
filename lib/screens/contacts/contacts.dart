@@ -12,32 +12,41 @@ class Contacts extends StatefulWidget {
 }
 
 class _ContactsState extends State<Contacts> {
+  final GlobalKey<RefreshIndicatorState> _refreshIndicatorKey =
+      new GlobalKey<RefreshIndicatorState>();
+
   @override
   Widget build(BuildContext context) {
-    return ScopedModelDescendant<MainModel>(
-      builder: (context, child, MainModel model) {
+    return ScopedModelDescendant<MainScopedModel>(
+      builder: (context, child, MainScopedModel model) {
+        var body;
         if (!model.isAuthenticated) {
-          return ErrorScreen();
+          body = ErrorScreen();
         } else if (model.isContactsLoading) {
-          return LoadingScreen();
+          body = LoadingScreen();
         }
 
         final list = model.groups.map((GroupModel group) => _buildGroupCard(context, model, group));
+        body = ListView(
+          padding: EdgeInsets.all(10),
+          children: list.toList(),
+        );
 
         return Scaffold(
           appBar: AppBar(
             title: Text('Now Talk ! - ${model.user.username}'),
           ),
-          body: ListView(
-            padding: EdgeInsets.all(10),
-            children: list.toList(),
+          body: RefreshIndicator(
+            key: _refreshIndicatorKey,
+            onRefresh: () => model.loadGroups(),
+            child: body,
           ),
         );
       },
     );
   }
 
-  Widget _buildGroupCard(BuildContext context, MainModel model, GroupModel group) {
+  Widget _buildGroupCard(BuildContext context, MainScopedModel model, GroupModel group) {
     return Card(
       child: InkWell(
         splashColor: Colors.purpleAccent,
