@@ -51,7 +51,10 @@ class _ContactsState extends State<Contacts> {
       child: InkWell(
         splashColor: Colors.purpleAccent,
         child: ListTile(
-          leading: FlutterLogo(size: 56.0),
+          leading: CircleAvatar(
+            radius: 30,
+            backgroundImage: NetworkImage('https://i.pravatar.cc/100?u=${group.id}'),
+          ),
           title: Text(group.getName(model.user.uid)),
           subtitle: Text(group.lastMessage?.content ?? ''),
         ),
