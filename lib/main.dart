@@ -41,6 +41,7 @@ class _RootState extends State<Root> {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Now Talk',
+      debugShowCheckedModeBanner: false,
       theme: ThemeData(
         primarySwatch: Colors.purple,
         visualDensity: VisualDensity.adaptivePlatformDensity,
