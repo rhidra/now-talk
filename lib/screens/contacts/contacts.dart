@@ -55,7 +55,7 @@ class _ContactsState extends State<Contacts> {
             radius: 30,
             backgroundImage: NetworkImage('https://i.pravatar.cc/100?u=${group.id}'),
           ),
-          title: Text(group.getName(model.user.uid)),
+          title: Text(group.name),
           subtitle: Text(group.lastMessage?.content ?? ''),
         ),
         onTap: () => Navigator.of(context).pushNamed('/chat', arguments: group),

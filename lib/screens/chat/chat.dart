@@ -62,7 +62,7 @@ class _ChatState extends State<Chat> {
       const double barPadding = 10;
       return Scaffold(
         appBar: AppBar(
-          title: Text(widget.group.getName(model.user.uid)),
+          title: Text(widget.group.name),
         ),
         body: Stack(
           children: [
