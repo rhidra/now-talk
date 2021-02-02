@@ -16,6 +16,13 @@ class _ContactsState extends State<Contacts> {
       new GlobalKey<RefreshIndicatorState>();
 
   @override
+  void initState() {
+    super.initState();
+    MainScopedModel model = ScopedModel.of(context);
+    Future.delayed(Duration(seconds: 1), () => model.loadGroups());
+  }
+
+  @override
   Widget build(BuildContext context) {
     return ScopedModelDescendant<MainScopedModel>(
       builder: (context, child, MainScopedModel model) {

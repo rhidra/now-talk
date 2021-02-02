@@ -30,21 +30,19 @@ class ContactsScopedModel extends AuthScopedModel {
     loadGroups();
   }
 
-  void loadContacts() async {
-    _isLoading = true;
-    notifyListeners();
-
+  Future<void> loadContacts() async {
     QuerySnapshot query = await _users.get();
     _contacts = query.docs
         .where((DocumentSnapshot doc) => doc.id != _auth.currentUser.uid)
         .map<UserModel>((DocumentSnapshot doc) => UserModel(doc.id, doc['username']))
         .toList();
-
-    _isLoading = false;
-    notifyListeners();
   }
 
   Future<void> loadGroups() async {
+    if (!this.isAuthenticated) {
+      return;
+    }
+
     _isLoading = true;
     notifyListeners();
 
@@ -65,7 +63,7 @@ class ContactsScopedModel extends AuthScopedModel {
       }
 
       final DocumentReference g = await _groups.add({
-        'users': [this.user.uid, contact.uid]
+        'users': [_auth.currentUser.uid, contact.uid]
       });
       _contactsGroups.add(GroupModel(g.id, [this.user, contact]));
       notifyListeners();
@@ -73,8 +71,12 @@ class ContactsScopedModel extends AuthScopedModel {
 
     // Load the last message for cleaner display
     await Future.wait(_contactsGroups.map<Future>((group) async {
-      final msg = (await _chats.doc(group.id).get()).data()['messages'];
-      group.lastMessage = msg.length > 0 ? Message.fromJson(msg.last, group.users) : null;
+      try {
+        final msg = (await _chats.doc(group.id).get()).data()['messages'];
+        group.lastMessage = Message.fromJson(msg.last, group.users);
+      } catch (e) {
+        group.lastMessage = null;
+      }
     }));
 
     _isLoading = false;
