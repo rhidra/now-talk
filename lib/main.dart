@@ -33,11 +33,6 @@ class Root extends StatefulWidget {
 
 class _RootState extends State<Root> {
   @override
-  void initState() {
-    super.initState();
-  }
-
-  @override
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Now Talk',
@@ -56,11 +51,6 @@ class _RootState extends State<Root> {
         WidgetBuilder builder = routes[settings.name];
         return MaterialPageRoute(builder: (ctx) => builder(ctx));
       },
-      // routes: {
-      //   '/': (BuildContext context) => Login(),
-      //   '/contacts': (BuildContext context) => Contacts(),
-      //   '/chat': (BuildContext context) => Chat(),
-      // },
     );
   }
 }
