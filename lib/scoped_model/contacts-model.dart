@@ -42,14 +42,12 @@ class ContactsScopedModel extends AuthScopedModel {
     notifyListeners();
   }
 
-  void loadGroups() async {
+  Future<void> loadGroups() async {
     _isLoading = true;
     notifyListeners();
 
     // Load contacts
-    if (_contacts.length == 0) {
-      await loadContacts();
-    }
+    await loadContacts();
 
     // Load groups
     QuerySnapshot query = await _groups.where('users', arrayContains: _auth.currentUser.uid).get();
@@ -68,6 +66,7 @@ class ContactsScopedModel extends AuthScopedModel {
         'users': [this.user.uid, contact.uid]
       });
       _contactsGroups.add(GroupModel(g.id, [this.user, contact]));
+      notifyListeners();
     }));
 
     _isLoading = false;
