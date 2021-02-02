@@ -23,7 +23,7 @@ class _ChatState extends State<Chat> {
   @override
   void initState() {
     super.initState();
-    MainModel model = ScopedModel.of(context);
+    MainScopedModel model = ScopedModel.of(context);
     model.loadChat(widget.group);
   }
 
@@ -35,7 +35,7 @@ class _ChatState extends State<Chat> {
 
   @override
   Widget build(BuildContext context) {
-    return ScopedModelDescendant<MainModel>(builder: (context, child, MainModel model) {
+    return ScopedModelDescendant<MainScopedModel>(builder: (context, child, MainScopedModel model) {
       if (!model.isAuthenticated) {
         return ErrorScreen();
       } else if (model.isChatLoading) {
@@ -125,7 +125,7 @@ class _ChatState extends State<Chat> {
     });
   }
 
-  void handleSubmit(MainModel model) {
+  void handleSubmit(MainScopedModel model) {
     final txt = _textCtrl.text.trim();
     if (txt.length > 0) {
       model.sendMessage(txt, widget.group);

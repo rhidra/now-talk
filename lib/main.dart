@@ -9,17 +9,17 @@ import 'package:scoped_model/scoped_model.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
-  runApp(MyApp(model: MainModel()));
+  runApp(MyApp(model: MainScopedModel()));
 }
 
 class MyApp extends StatelessWidget {
-  final MainModel model;
+  final MainScopedModel model;
 
   MyApp({this.model});
 
   @override
   Widget build(BuildContext context) {
-    return ScopedModel<MainModel>(
+    return ScopedModel<MainScopedModel>(
       model: model,
       child: Root(),
     );

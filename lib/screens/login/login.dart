@@ -15,8 +15,8 @@ class _LoginState extends State<Login> {
 
   @override
   Widget build(BuildContext context) {
-    return ScopedModelDescendant<MainModel>(
-      builder: (context, child, MainModel model) {
+    return ScopedModelDescendant<MainScopedModel>(
+      builder: (context, child, MainScopedModel model) {
         if (model.isAuthLoading) {
           return LoadingScreen();
         } else if (model.isAuthError) {
@@ -34,7 +34,7 @@ class _LoginState extends State<Login> {
     );
   }
 
-  _buildUsernameForm(BuildContext context, MainModel model) {
+  _buildUsernameForm(BuildContext context, MainScopedModel model) {
     return Scaffold(
       body: Container(
         height: double.infinity,
